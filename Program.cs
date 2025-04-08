@@ -1,3 +1,5 @@
+using NotificationSystem.Services;
+
 namespace NotificationSystem
 {
     public class Program
@@ -7,6 +9,7 @@ namespace NotificationSystem
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddControllers();
+            builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 
             var app = builder.Build();
 
