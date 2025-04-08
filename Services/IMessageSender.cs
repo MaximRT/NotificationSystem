@@ -7,7 +7,7 @@ namespace NotificationSystem.Services
         /// <summary>
         /// Отправить сообщение
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="message"> Объект сообщения </param>
         /// <returns></returns>
         Task SendMessageAsync(MimeMessage message);
     }
