@@ -8,7 +8,6 @@ namespace NotificationSystem.Services
         private readonly IMessageSender _messageSender = messageSender;
         private readonly EmailSettings _settings = settings.Value;
 
-
         public async Task Send(string recipient, string header, string body)
         {
             var message = new MimeMessage();
