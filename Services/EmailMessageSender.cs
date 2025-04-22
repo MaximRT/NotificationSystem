@@ -1,33 +1,39 @@
 ﻿using MailKit.Net.Smtp;
 using MailKit.Security;
-using Microsoft.Extensions.Options;
 using MimeKit;
+using NotificationSystem.Configs;
 
 namespace NotificationSystem.Services
 {
-    public class EmailMessageSender(IOptions<EmailSettings> setting) : IMessageSender
+    public class EmailMessageSender(ISmtpSettingsProvider smtpSettingsProvider, ILogger<EmailMessageSender> logger) : IMessageSender
     {
-        private readonly EmailSettings _setting = setting.Value;
+        private readonly ISmtpSettingsProvider _smtpSettingsProvider = smtpSettingsProvider;
+        private readonly ILogger _logger = logger;
 
         /// <inheritdoc/>
-        public async Task SendMessageAsync(MimeMessage message)
+        public async Task SendMessageAsync(MimeMessage message, string providerName)
         {
             try
             {
+                _logger.LogInformation($"Method:EmailMessageSender.SendMessageAsync, StartMessageSendingProcess...");
+
+                var settings = _smtpSettingsProvider.GetSettings(providerName);
                 using var client = new SmtpClient();
 
-                SecureSocketOptions socketOptions = _setting.UseSsl
+                SecureSocketOptions socketOptions = settings.UseSsl
                     ? SecureSocketOptions.SslOnConnect
                     : SecureSocketOptions.StartTls;
 
-                await client.ConnectAsync(_setting.SmtpServer, _setting.Port, SecureSocketOptions.SslOnConnect);
-                await client.AuthenticateAsync(_setting.FromEmail, _setting.Password);
+                await client.ConnectAsync(settings.Host, settings.Port, SecureSocketOptions.SslOnConnect);
+                await client.AuthenticateAsync(settings.Username, settings.Password);
                 await client.SendAsync(message);
                 await client.DisconnectAsync(true);
+
+                _logger.LogInformation($"Method:EmailMessageSender.SendMessageAsync, CompletionMessageSendingProcess...");
             }
             catch (Exception ex)
             {
-                throw new ApplicationException("Ошибка при отправке письма", ex);
+                _logger.LogError($"Method:EmailMessageSender.SendMessageAsync,, Error when sending a message : {ex}");
             }
         }
     }

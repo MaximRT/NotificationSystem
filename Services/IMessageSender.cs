@@ -8,7 +8,8 @@ namespace NotificationSystem.Services
         /// Отправить сообщение
         /// </summary>
         /// <param name="message"> Объект сообщения </param>
+        /// <param name="providerName"> Имя провайдера с настройками из конфига </param>
         /// <returns></returns>
-        Task SendMessageAsync(MimeMessage message);
+        Task SendMessageAsync(MimeMessage message, string providerName);
     }
 }
