@@ -24,7 +24,7 @@ namespace NotificationSystem.Services
                     ? SecureSocketOptions.SslOnConnect
                     : SecureSocketOptions.StartTls;
 
-                await client.ConnectAsync(settings.Host, settings.Port, SecureSocketOptions.SslOnConnect);
+                await client.ConnectAsync(settings.Host, settings.Port, socketOptions);
                 await client.AuthenticateAsync(settings.Username, settings.Password);
                 await client.SendAsync(message);
                 await client.DisconnectAsync(true);
